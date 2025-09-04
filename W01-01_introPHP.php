@@ -26,7 +26,7 @@
     <dev style="color: blue;">
         <?php
         echo "Hello World <br>";
-        print "<Aphirak style='color:Red;'>Aphirak</span>";
+        print "<span style='color:Red;'>Nansiri Pookpusa</span>";
         ?>
     </dev>
 

@@ -1,4 +1,3 @@
--- สร้างฐานข้อมูล
 CREATE DATABASE IF NOT EXISTS online_shop DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE online_shop;
 
