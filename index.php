@@ -1,40 +1,34 @@
+<?php
+
+require_once '../config.php';
+require_once 'auth_admin.php';
+// ตรวจสอบสทิ ธิ์admin.
+
+?>
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<title>แผงควบคุมผู้ดูแลระบบ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
-<body>
-    <h1>Welcome to PHP Basic</h1>
-    <p>This is a simple PHP Application.</p>
-    <hr>
-    <h1 style="color: red;">Basic PHP Syntax</h1>
-    <pre>
-            &lt;?php
-                echo "Hello World";
-            ?&gt;   
-        </pre>
-    <h3>Result</h3>
-    <div style="color: blue;">
-        <?php
-        echo "Hello World!<br>";
-        print "<span style='color:green' ;>Nansiri Pookpusa</span>";
-        ?>
-    </div>
-    <h1 style="color: red">MY MENU</h1>
-    <ul>
-        <li><a href="W01-0-introPHP.php">Intro PHP</a></li>
-        <li><a href="W02_01_oodEvenNumber.php">Odd-Even-Number</a></li>
-        <li><a href="W02_02_grade.php">Calculate Grade</a></li>
-        <li><a href="HW02_calmon.php">Calculate sale</a></li>   
-        <li><a href="W06_01_loopProduct.php">Show Product (fix data)</a></li>
-        <li><a href="W07_01_connectDB.php">Connect Database</a></li>
-        <li><a href="W07_02_fetchData.php">Fetch Data</a></li>
-    </ul>
-
+<body class="container mt-4">
+<h2>ระบบผู้ดูแลระบบ</h2>
+<p class="mb-4">ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['username']) ?></p>
+<div class="row">
+    <div class="col-md-4 mb-3">
+<a href="users.php" class="btn btn-warning w-100">จัดการสมาชิก</a>
+</div>
+<div class="col-md-4 mb-3">
+<a href="categories.php" class="btn btn-dark w-100">จัดการหมวดหมู่</a>
+</div>
+<div class="col-md-4 mb-3">
+<a href="products.php" class="btn btn-primary w-100">จัดการสินค้า</a>
+</div>
+<div class="col-md-4 mb-3">
+<a href="orders.php" class="btn btn-success w-100">จัดการคำสั่งซื้อ </a>
+</div>
+</div>
+<a href="../logout.php" class="btn btn-secondary mt-3">ออกจากระบบ</a>
 </body>
-
 </html>
