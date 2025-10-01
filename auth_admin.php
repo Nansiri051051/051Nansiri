@@ -1,9 +1,10 @@
 <?php
-session_start();
+
 // ตรวจสอบสิทธิ์ admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-header("Location: ../login.php");
+header("Location: ../login.php"); // <<< ใช้ ../ เพื่อย้อนกลับไปโฟลเดอร์แม่
 exit;
+
 }
 
 
