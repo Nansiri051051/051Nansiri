@@ -28,13 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `tb_664230051` (
-  `#` int(5) NOT NULL COMMENT 'ลำดับ',
-  `Student ID` varchar(9) NOT NULL COMMENT 'รหัสนักศึกษา',
-  `์Name` varchar(100) NOT NULL COMMENT 'ชื่อ',
+  `No` int(5) NOT NULL COMMENT 'ลำดับ',
+  `ID` varchar(9) NOT NULL COMMENT 'รหัสนักศึกษา',
+  `Name` varchar(100) NOT NULL COMMENT 'ชื่อ',
   `Last name` varchar(100) NOT NULL COMMENT 'นามสกุล',
   `Email` varchar(100) NOT NULL COMMENT 'อีเมล',
-  `Phone` varchar(20) NOT NULL COMMENT 'เบอร์โทร',
+  `Tel` varchar(20) NOT NULL COMMENT 'เบอร์โทร',
   `Created At` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'เวลาสร้าง'
+  `Age` varchar(2) NOT NULL COMMENT 'อายุ',
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 COMMIT;
 
