@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_student']) || is
     if (isset($_POST['add_student'])) {
         $newStudent['no'] = $next_no;
         $_SESSION['students'][] = $newStudent;
-        $message = 'เพิ่มนักศึกษาใหม่สำเร็จแล้ว! 🎉';
+        $message = 'เพิ่มนักศึกษาใหม่สำเร็จแล้ว';
         header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
         exit();
 
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['add_student']) || is
             if ($student['no'] === $edit_no) {
                 $newStudent['no'] = $edit_no;
                 $_SESSION['students'][$key] = $newStudent;
-                $message = 'แก้ไขข้อมูลนักศึกษาสำเร็จแล้ว! ✏️';
+                $message = 'แก้ไขข้อมูลนักศึกษาสำเร็จแล้ว';
                 header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
                 exit();
             }
@@ -240,4 +240,5 @@ if ($action === 'edit' && isset($_GET['no'])) {
         let table = new DataTable('#studentTable');
     </script>
 </body>
+
 </html>
