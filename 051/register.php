@@ -18,7 +18,7 @@
             $error[] = "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน";
         } else {
             $sql = "SELECT * FROM users WHERE username = ? OR email = ?";
-            $stmt = $conn->prepare($sql);
+            $stmt = $pdo->prepare($sql);
             $stmt->execute([$username,  $email]);
 
             if($stmt->rowCount() > 0){
@@ -30,7 +30,7 @@
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
             $sql = "INSERT INTO users(username, full_name, email, password, role) VALUES (?, ?, ?, ?, 'member')";
-            $stmt = $conn->prepare($sql);
+            $stmt = $pdo->prepare($sql);
             $stmt->execute([$username, $fullname, $email, $hashedPassword]);
             
             header("Location: login.php");
@@ -47,12 +47,12 @@
     <title>Register</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
-<body>
+<body style="background-color: #a2dfffff;">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <?php if (!empty($error)): ?>
-                    <div class="alert alert-primary">
+                    <div class="alert alert-pink">
                         <ul>
                             <?php foreach ($error as $e): ?>
                                 <li><?= htmlspecialchars($e) ?></li>
