@@ -1,158 +1,135 @@
 <?php
     session_start();
+    // ตรวจสอบการเชื่อมต่อฐานข้อมูล
     require_once 'config.php';
     $isLoggedIn = isset($_SESSION['user_id']);
+    
+    // ตรวจสอบว่ามี product ID ถูกส่งมาหรือไม่
     if(!isset($_GET['id'])){
         header('Location: index.php');
         exit();
     }
+    
     $product_id = $_GET['id'];
+    
+    // ดึงข้อมูลสินค้ารวมถึงคอลัมน์ 'image'
     $stmt = $conn->prepare("SELECT p.*, c.category_name
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
     WHERE p.product_id = ?");
     $stmt->execute([$product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $img = !empty($product['image'])
-    ? 'product_images/' . rawurlencode($product['image'])
-    : 'product_images/no-image.jpg';
+
+    // ถ้าไม่พบสินค้าให้กลับไปหน้าหลัก
+    if (!$product) {
+        header('Location: index.php');
+        exit();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายละเอียดสินค้า</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>รายละเอียดสินค้า: <?= htmlspecialchars($product['product_name'])?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #5eead4, #38bdf8);
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* พื้นหลังสีชมพู */
+            background-color: #ff006aff; 
             min-height: 100vh;
         }
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .card-product-detail {
+            /* ปรับสไตล์ Card ให้เด่นขึ้น */
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
         }
-        .card {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+        .product-image-container {
+            /* จัดการรูปภาพ */
+            padding: 10px;
+            text-align: center;
         }
-        .card:hover {
-            transform: translateY(-5px);
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .card-header {
-            background: linear-gradient(135deg, #14b8a6, #0ea5e9) !important;
-            border-top-left-radius: 20px !important;
-            border-top-right-radius: 20px !important;
-            color: white;
-        }
-        .btn-outline-danger {
-            border-color: #14b8a6;
-            color: #14b8a6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .btn-outline-danger:hover {
-            background-color: #14b8a6;
-            color: white;
+        .price-text {
+            color: #ff006aff; /* สีชมพูสำหรับราคา */
+            font-size: 2rem;
+            font-weight: bold;
         }
         .btn-success {
-            background-color: #10b981;
-            border-color: #10b981;
-            transition: background-color 0.3s ease;
+            /* ปุ่มเพิ่มในตะกร้าสีเขียว */
+            background-color: #ff006aff; 
+            border-color: #ff006aff;
+            transition: background-color 0.3s;
         }
         .btn-success:hover {
-            background-color: #0f766e;
-            border-color: #0f766e;
-        }
-        .btn-primary {
-            background-color: #0ea5e9;
-            border-color: #0ea5e9;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #0284c7;
-            border-color: #0284c7;
-        }
-        .badge.bg-secondary {
-            background-color: #2dd4bf !important;
-        }
-        .text-info {
-            color: #0ea5e9 !important;
+            background-color: #cc0055;
+            border-color: #cc0055;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <a href="index.php" class="btn btn-outline-danger mb-3">
-                    <i class="fas fa-arrow-left me-1"></i>กลับ
-                </a>
-
-                
-                <div class="card shadow-lg">
-                    <img src="<?= $img?>"
-                    <div class="card-header text-center text-white py-4">
-                        <i class="fas fa-box fa-2x mb-2"></i>
-                        <h2 class="mb-0"><?= htmlspecialchars($product['product_name'])?></h2>
+    <div class="container mt-5">
+        <a href="index.php" class="btn btn-light mb-4">← กลับหน้ารายการสินค้า</a>
+        
+        <div class="card card-product-detail">
+            <div class="card-body">
+                <div class="row">
+                    <!-- ส่วนแสดงรูปภาพสินค้า (ซ้ายมือ) -->
+                    <div class="col-md-5 product-image-container">
+                        <?php 
+                        // ตรวจสอบ path รูปภาพ (สมมติว่ารูปภาพอยู่ในโฟลเดอร์ product_images/)
+                        $image_path = 'product_images/' . htmlspecialchars($product['image']); 
+                        $placeholder_url = "https://placehold.co/400x400/CCCCCC/333333?text=Product+Image";
+                        ?>
+                        <img src="<?= $image_path ?>" 
+                             onerror="this.onerror=null;this.src='<?= $placeholder_url ?>';"
+                             class="product-image" 
+                             alt="<?= htmlspecialchars($product['product_name']) ?>">
                     </div>
-                    <div class="card-body p-4">
-                        <span class="badge bg-secondary mb-3">
-                            <i class="fas fa-tag me-1"></i><?= htmlspecialchars($product['category_name'])?>
-                        </span>
-                        
-                        <p class="mb-4"><?= nl2br(htmlspecialchars($product['description'])) ?></p>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h4 class="text-success">
-                                    <i class="fas fa-money-bill me-2"></i><?= number_format($product['price'], 2)?> บาท
-                                </h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h5 class="text-info">
-                                    <i class="fas fa-boxes me-2"></i>คงเหลือ <?= $product['stock']?> ชิ้น
-                                </h5>
-                            </div>
+
+                    <!-- ส่วนแสดงรายละเอียดสินค้า (ขวามือ) -->
+                    <div class="col-md-7">
+                        <h1 class="card-title mb-1"><?= htmlspecialchars($product['product_name'])?></h1>
+                        <h5 class="text-muted mb-4">หมวดหมู่: <?= htmlspecialchars($product['category_name'])?></h5>
+
+                        <div class="mb-4">
+                            <h4 class="price-text"><?= number_format($product['price'], 2)?> บาท</h4>
+                            <p class="text-secondary">คงเหลือในคลัง: <?= htmlspecialchars($product['stock'])?> ชิ้น</p>
                         </div>
 
+                        <!-- คำอธิบายสินค้า -->
+                        <div class="mb-4">
+                            <h6>รายละเอียดสินค้า:</h6>
+                            <p class="card-text text-break"><?= nl2br(htmlspecialchars($product['description'] ?? 'ไม่มีคำอธิบายสินค้า'))?></p>
+                        </div>
+
+                        <!-- ส่วนสั่งซื้อ -->
                         <?php if ($isLoggedIn): ?>
-                            <form action="cart.php" method="post" class="mb-3">
-                                <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="quantity" class="form-label">จำนวน</label>
-                                        <input type="number" name="quantity" id="quantity" class="form-control" 
-                                               value="1" min="1" max="<?= $product['stock'] ?>" required>
-                                    </div>
-                                    <div class="col-md-9 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-success btn-lg">
-                                            <i class="fas fa-cart-plus me-1"></i>เพิ่มในตะกร้า
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                        <form action="cart.php" method="post" class="mt-4 d-flex align-items-center">
+                            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                            
+                            <label for="quantity" class="me-3 fw-bold">จำนวน:</label>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="<?=
+                            htmlspecialchars($product['stock']) ?>" class="form-control w-auto me-3" style="max-width: 80px;" required>
+                            
+                            <button type="submit" class="btn btn-success flex-grow-1">เพิ่มในตะกร้า</button>
+                        </form>
                         <?php else: ?>
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>กรุณาเข้าสู่ระบบเพื่อสั่งซื้อ
-                                <a href="login.php" class="btn btn-primary btn-sm ms-2">เข้าสู่ระบบ</a>
-                            </div>
+                        <div class="alert alert-danger mt-4" role="alert">
+                            <a href="login.php" class="alert-link fw-bold">กรุณาเข้าสู่ระบบ</a> เพื่อทำการสั่งซื้อสินค้า
+                        </div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

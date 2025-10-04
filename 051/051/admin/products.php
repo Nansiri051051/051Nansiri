@@ -10,29 +10,22 @@ $stock = intval($_POST['stock']); // intval() ใชแ้ปลงเป็น 
 $category_id = intval($_POST['category_id']);
 // ค่ำที่ได ้จำกฟอร์มเป็น string เสมอ
 if ($name && $price > 0) { 
+    
+    
     $imageName = null;
-
-
-
 if (!empty($_FILES['product_image']['name'])) {
-    $file = $_FILES['product_image'];
-    $allowed = ['image/jpeg', 'image/png'];
-
-    if (in_array($file['type'], $allowed)) {
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $imageName = 'product_' . time() . '.' . $ext;
-        $path = __DIR__ . '/../product_images/' . $imageName;
-        move_uploaded_file($file['tmp_name'], $path);
-    }
+$file = $_FILES['product_image'];
+$allowed = ['image/jpeg', 'image/png'];
+if (in_array($file['type'], $allowed)) {
+$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+$imageName = 'product_' . time() . '.' . $ext;
+$path = __DIR__ . '/../product_images/' . $imageName;
+move_uploaded_file($file['tmp_name'], $path);
 }
-
-
+}
 $stmt = $conn->prepare("INSERT INTO products (product_name, description, price, stock, category_id, image)
 VALUES (?, ?, ?, ?, ?, ?)");
 $stmt->execute([$name, $description, $price, $stock, $category_id, $imageName]);
-
-
-
 
 header("Location: products.php");
 exit;
@@ -42,7 +35,6 @@ exit;
 // // ผำ่ นเงอื่ นไข: มชี อื่ สนิคำ้ และ รำคำมำกกวำ่ 0
 // }
 }
-
 // ลบสินค้า
 // if (isset($_GET['delete'])) {
 // $product_id = $_GET['delete'];
@@ -51,7 +43,6 @@ exit;
 // header("Location: products.php");
 // exit;
 // }
-
 // ลบสนิ คำ้ (ลบไฟลร์ปู ดว้ย)
 if (isset($_GET['delete'])) {
 $product_id = (int)$_GET['delete']; // แคสต์เป็น int
@@ -80,14 +71,9 @@ if ($filePath && strpos($filePath, $baseDir) === 0 && is_file($filePath)) {
 @unlink($filePath); // ใช ้@ กัน warning ถำ้ลบไมส่ ำเร็จ
 }
 }
-header("Location: 68products.php");
+header("Location: products.php");
 exit;
 }
-
-
-
-
-
 // ดึงรายการสินค้า
 $stmt = $conn->query("SELECT p.*, c.category_name FROM products p LEFT JOIN categories c ON
 p.category_id = c.category_id ORDER BY p.created_at DESC");
@@ -95,114 +81,95 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // ดึงหมวดหมู่
 $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="UTF-8">
-    <title>จัดการสินค้า</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #4caf50, #2196f3);
-            /* ฟ้า-เขียว */
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<title>จัดการสินค้า</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #4caf50, #2196f3); /* ฟ้า-เขียว */
+        background-size: 400% 400%;
+        animation: gradient-animation 15s ease infinite;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+    }
 
-        @keyframes gradient-animation {
-            0% {
-                background-position: 0% 50%;
-            }
+    @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 
-            50% {
-                background-position: 100% 50%;
-            }
+    .card {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9); /* ใสขึ้นเล็กน้อย */
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
 
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-        .card {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-            /* ใสขึ้นเล็กน้อย */
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
+    .btn-secondary {
+        background-color: #4caf50; /* เขียว */
+        border-color: #4caf50;
+        transition: background-color 0.3s ease;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+    .btn-secondary:hover {
+        background-color: #388e3c;
+        border-color: #388e3c;
+    }
 
-        .btn-secondary {
-            background-color: #4caf50;
-            /* เขียว */
-            border-color: #4caf50;
-            transition: background-color 0.3s ease;
-        }
+    .btn-primary {
+        background-color: #2196f3; /* ฟ้า */
+        border-color: #2196f3;
+        transition: background-color 0.3s ease;
+    }
 
-        .btn-secondary:hover {
-            background-color: #388e3c;
-            border-color: #388e3c;
-        }
+    .btn-primary:hover {
+        background-color: #1976d2;
+        border-color: #1565c0;
+    }
 
-        .btn-primary {
-            background-color: #2196f3;
-            /* ฟ้า */
-            border-color: #2196f3;
-            transition: background-color 0.3s ease;
-        }
+    .btn-danger {
+        background-color: #f44336; /* สีแดง */
+        border-color: #f44336;
+        transition: background-color 0.3s ease;
+    }
 
-        .btn-primary:hover {
-            background-color: #1976d2;
-            border-color: #1565c0;
-        }
+    .btn-danger:hover {
+        background-color: #e53935;
+        border-color: #c62828;
+    }
 
-        .btn-danger {
-            background-color: #f44336;
-            /* สีแดง */
-            border-color: #f44336;
-            transition: background-color 0.3s ease;
-        }
+    .btn-warning {
+        background-color: #ff9800; /* สีส้ม */
+        border-color: #ff9800;
+        transition: background-color 0.3s ease;
+    }
 
-        .btn-danger:hover {
-            background-color: #e53935;
-            border-color: #c62828;
-        }
-
-        .btn-warning {
-            background-color: #ff9800;
-            /* สีส้ม */
-            border-color: #ff9800;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-warning:hover {
-            background-color: #fb8c00;
-            border-color: #f57c00;
-        }
-    </style>
+    .btn-warning:hover {
+        background-color: #fb8c00;
+        border-color: #f57c00;
+    }
+</style>
 </head>
-
 <body class="container mt-4">
     <div class="card shadow-lg p-4">
         <h2><i class="fas fa-box me-2"></i>จัดการสินค้า</h2>
         <a href="index.php" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left me-1"></i>กลับหน้าผู้ดูแล</a>
-
+        
         <!-- ฟอร์มเพิ่มสินค้าใหม่ -->
         <h5 class="mt-4"><i class="fas fa-plus-circle me-1"></i>เพิ่มสินค้าใหม่</h5>
         <form method="post" enctype="multipart/form-data" class="row g-3 mb-4">
-
             <div class="col-md-4">
                 <input type="text" name="product_name" class="form-control" placeholder="ชื่อสินค้า" required>
             </div>
@@ -216,27 +183,24 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
                 <select name="category_id" class="form-select" required>
                     <option value="">เลือกหมวดหมู่</option>
                     <?php foreach ($categories as $cat): ?>
-                        <option value="<?= $cat['category_id'] ?>"><?= htmlspecialchars($cat['category_name']) ?></option>
+                    <option value="<?= $cat['category_id'] ?>"><?= htmlspecialchars($cat['category_name'])?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-12">
                 <textarea name="description" class="form-control" placeholder="รายละเอียดสินค้า" rows="2"></textarea>
             </div>
-
             <div class="col-md-6">
                 <label class="form-label">รูปสินค้า(jpg, png)</label>
                 <input type="file" name="product_image" class="form-control">
             </div>
 
 
-
             <div class="col-12">
-                <button type="submit" name="add_product" class="btn btn-primary"><i
-                        class="fas fa-plus me-1"></i>เพิ่มสินค้า</button>
+                <button type="submit" name="add_product" class="btn btn-primary"><i class="fas fa-plus me-1"></i>เพิ่มสินค้า</button>
             </div>
         </form>
-
+        
         <!-- แสดงรายการสินค้า, แก้ไข, ลบ -->
         <h5><i class="fas fa-list me-1"></i>รายการสินค้า</h5>
         <div class="table-responsive">
@@ -252,27 +216,26 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
                 </thead>
                 <tbody>
                     <?php foreach ($products as $p): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($p['product_name']) ?></td>
-                            <td><?= htmlspecialchars($p['category_name']) ?></td>
-                            <td><?= number_format($p['price'], 2) ?> บาท</td>
-                            <td><?= $p['stock'] ?></td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-danger delete-btn" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal" data-product-id="<?= $p['product_id'] ?>">
-                                    <i class="fas fa-trash-alt"></i> ลบ
-                                </a>
-                                <a href="edit_products.php?id=<?= $p['product_id'] ?>" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i> แก้ไข
-                                </a>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td><?= htmlspecialchars($p['product_name']) ?></td>
+                        <td><?= htmlspecialchars($p['category_name']) ?></td>
+                        <td><?= number_format($p['price'], 2) ?> บาท</td>
+                        <td><?= $p['stock'] ?></td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-product-id="<?= $p['product_id'] ?>">
+                                <i class="fas fa-trash-alt"></i> ลบ
+                            </a>
+                            <a href="edit_products.php?id=<?= $p['product_id'] ?>" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> แก้ไข
+                            </a>
+                        </td>
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
-
+    
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -291,15 +254,15 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
             </div>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const deleteModal = document.getElementById('deleteModal');
             const deleteProductLink = document.getElementById('deleteProductLink');
 
             if (deleteModal) {
-                deleteModal.addEventListener('show.bs.modal', function (event) {
+                deleteModal.addEventListener('show.bs.modal', function(event) {
                     const button = event.relatedTarget;
                     const productId = button.getAttribute('data-product-id');
                     deleteProductLink.href = 'products.php?delete=' + productId;
@@ -308,5 +271,4 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
         });
     </script>
 </body>
-
 </html>
